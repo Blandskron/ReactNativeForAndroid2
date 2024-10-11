@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { fetchUsers, createUser, updateUser, deleteUser } from '../../utils/api';
 
 const Home = () => {
   const [formData, setFormData] = useState({
@@ -14,62 +15,47 @@ const Home = () => {
   const [selectedId, setSelectedId] = useState('');
 
   useEffect(() => {
-    fetchUsers();
+    loadUsers();
   }, []);
 
-  const fetchUsers = async () => {
+  const loadUsers = async () => {
     try {
-      const response = await fetch('http://10.0.2.2:8000/clientes/');
-      const data = await response.json();
+      const data = await fetchUsers();
       setUsers(data);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error('Error loading users:', error);
     }
   };
 
   const handleCreate = async () => {
     try {
-      await fetch('http://10.0.2.2:8000/clientes/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      await createUser(formData);
       clearForm();
-      fetchUsers();
+      loadUsers();
     } catch (error) {
       console.error('Error creating user:', error);
-    }
-  };
-
-  const handleDelete = async () => {
-    try {
-      await fetch(`http://10.0.2.2:8000/clientes/${selectedId}/`, {
-        method: 'DELETE',
-      });
-      clearForm();
-      fetchUsers();
-    } catch (error) {
-      console.error('Error deleting user:', error);
     }
   };
 
   const handleUpdate = async () => {
     if (selectedId) {
       try {
-        await fetch(`http://10.0.2.2:8000/clientes/${selectedId}/`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
+        await updateUser(selectedId, formData);
         clearForm();
-        fetchUsers();
+        loadUsers();
       } catch (error) {
         console.error('Error updating user:', error);
       }
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteUser(selectedId);
+      clearForm();
+      loadUsers();
+    } catch (error) {
+      console.error('Error deleting user:', error);
     }
   };
 

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { loginUser } from "../../utils/api";
 
 const Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
   
   const handleLogin = async () => {
     if (!username || !password) {
@@ -12,13 +14,7 @@ const Login = ({ navigation }) => {
     }
 
     try {
-      const response = await fetch('http://10.0.2.2:8000/api/login/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
+      const response = await loginUser(username, password);
 
       if (response.ok) {
         const data = await response.json();

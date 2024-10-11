@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { registerUser } from "../../utils/api";
 
 const Register = ({ navigation }) => {
   const [username, setUsername] = useState('');
@@ -13,13 +14,7 @@ const Register = ({ navigation }) => {
     }
 
     try {
-      const response = await fetch('http://10.0.2.2:8000/api/register/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password, email }),
-      });
+      const response = await registerUser(username, password, email); // Llamada a la API abstraída
 
       if (response.ok) {
         const data = await response.json();
